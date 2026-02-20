@@ -38,8 +38,33 @@ public class CategoriaService {
                 .toList();
     }
 
+    public CategoriaResponseDTO buscarPorId(Long id) {
+        Categoria c = buscarEntidadePorId(id);
+        return new CategoriaResponseDTO(c.getId(), c.getNome(), c.getDescricao());
+    }
+
     public Categoria buscarEntidadePorId(Long id) {
         return repo.findById(id)
                 .orElseThrow(() -> new RegistroNaoEncontradoException("Categoria não encontrada: " + id));
+    }
+
+    public CategoriaResponseDTO editar(Long id, CategoriaRequestDTO dto) {
+        Categoria c = buscarEntidadePorId(id);
+
+        if (dto.nome() != null && !dto.nome().isBlank()) c.setNome(dto.nome().trim());
+        if (dto.descricao() != null && !dto.descricao().isBlank()) c.setDescricao(dto.descricao().trim());
+
+        Categoria salvo = repo.save(c);
+        return new CategoriaResponseDTO(salvo.getId(), salvo.getNome(), salvo.getDescricao());
+    }
+
+    public void deletar(Long id) {
+        Categoria c = buscarEntidadePorId(id);
+
+        if (c.getProdutos() != null && !c.getProdutos().isEmpty()) {
+            throw new DadosInvalidosException("Não é possível deletar uma categoria que possui produtos.");
+        }
+
+        repo.delete(c);
     }
 }

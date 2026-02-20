@@ -22,7 +22,6 @@ public class ProdutoService {
         this.categoriaService = categoriaService;
     }
 
-    // CREATE: valida obrigatórios (requisito)
     public ProdutoResponseDTO criar(ProdutoRequestDTO dto) {
         if (dto.nome() == null || dto.nome().isBlank()) {
             throw new DadosInvalidosException("Campo 'nome' é obrigatório.");
@@ -32,6 +31,9 @@ public class ProdutoService {
         }
         if (dto.categoriaId() == null) {
             throw new DadosInvalidosException("Campo 'categoriaId' é obrigatório.");
+        }
+        if (dto.estoque() == null) {
+            throw new DadosInvalidosException("Campo 'estoque' é obrigatório.");
         }
 
         Categoria categoria = categoriaService.buscarEntidadePorId(dto.categoriaId());
@@ -51,14 +53,12 @@ public class ProdutoService {
         return repo.findAll().stream().map(this::toResponse).toList();
     }
 
-    // GET por ID: lança exceção personalizada (requisito)
     public ProdutoResponseDTO buscarPorId(Long id) {
         Produto p = repo.findById(id)
                 .orElseThrow(() -> new RegistroNaoEncontradoException("Produto não encontrado: " + id));
         return toResponse(p);
     }
 
-    // EDIT: update parcial (requisito)
     public ProdutoResponseDTO editar(Long id, ProdutoRequestDTO dto) {
         Produto p = repo.findById(id)
                 .orElseThrow(() -> new RegistroNaoEncontradoException("Produto não encontrado: " + id));

@@ -32,4 +32,23 @@ public class CategoriaController {
     public ResponseEntity<List<CategoriaResponseDTO>> listar() {
         return ResponseEntity.ok(service.listar());
     }
+
+    @Operation(summary = "Buscar categoria por ID", description = "Retorna uma categoria pelo ID. Se não existir, retorna 404 via exceção personalizada.")
+    @GetMapping("/{id}")
+    public ResponseEntity<CategoriaResponseDTO> buscarPorId(@PathVariable Long id) {
+        return ResponseEntity.ok(service.buscarPorId(id));
+    }
+
+    @Operation(summary = "Editar categoria", description = "Atualiza apenas os campos preenchidos; mantém valores atuais se vier null/vazio.")
+    @PutMapping("/{id}")
+    public ResponseEntity<CategoriaResponseDTO> editar(@PathVariable Long id, @RequestBody CategoriaRequestDTO dto) {
+        return ResponseEntity.ok(service.editar(id, dto));
+    }
+
+    @Operation(summary = "Deletar categoria", description = "Remove uma categoria pelo ID. Se ela tiver produtos vinculados, retorna 400.")
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deletar(@PathVariable Long id) {
+        service.deletar(id);
+        return ResponseEntity.noContent().build();
+    }
 }

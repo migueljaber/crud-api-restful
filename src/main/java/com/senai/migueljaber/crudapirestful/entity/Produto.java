@@ -18,6 +18,7 @@ public class Produto {
 
     private String descricao;
 
+    @Column(nullable = false)
     private Integer estoque;
 
     @ManyToOne(optional = false)
